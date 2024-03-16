@@ -25,7 +25,7 @@ End If
 
 Set xmlhttp = CreateObject("MSXML2.ServerXMLHTTP")
 
-url = "http://localhost:6161/survey"
+url = "http://localhost:6161"
 
 data = "{""name"":""" & nameInp & """,""age"":" & ageInp & ",""team"":""" & infoInp & """}"
 
