@@ -1,15 +1,25 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
-# import json
+import json
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import database
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
-            file_name = 'index.html'
+            self.file_name = 'index.html'
+        elif self.path == '/data':
+            data = database.fetch_survey_data()  
+            if data is not None:
+                json_data = json.dumps(data)  
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json_data.encode())  
+                return
         else:
-            file_name = self.path.lstrip('/')
+            self.file_name = self.path.lstrip('/')
 
-        file_path = os.path.join(os.path.dirname(__file__), 'public', file_name)
+        file_path = os.path.join(os.path.dirname(__file__), 'public', self.file_name)
 
         if os.path.exists(file_path) and os.path.isfile(file_path):
             self.send_response(200)
