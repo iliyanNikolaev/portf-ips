@@ -34,7 +34,25 @@ def fetch_survey_data():
             results.append(result)
         return results
     except mysql.connector.Error as error:
-        print("Error while fetching data from MySQL", error)
+        print("error in db", error)
+        return None
+    finally:
+        if cursor:
+            cursor.close()
+
+
+def post_survey_data(name, age, info):
+    if not conn:
+        return None
+    
+    query = f"INSERT INTO `survey_data` (`name`, `age`, `info`) VALUES ('{name}', '{age}', '{info}');"
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query)
+        conn.commit()
+        return True
+    except mysql.connector.Error as error:
+        print("error in db", error)
         return None
     finally:
         if cursor:

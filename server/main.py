@@ -40,10 +40,36 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(b'404 Not Found')
 
     def do_POST(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        self.wfile.write(b'Hello, POST request!')
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
+        try:
+            data = json.loads(post_data.decode('utf-8'))
+            if 'name' not in data or 'age' not in data or 'info' not in data:
+                raise ValueError('missing data in body')
+            if not data['name'] or not data['age'] or not data['info']:
+                raise ValueError('all fields are required')
+        
+        except ValueError as e:
+            self.send_response(400)
+            self.end_headers()
+            self.wfile.write(str(e).encode()) 
+            return 
+    
+        name = data.get('name', '')
+        age = data.get('age', '')
+        info = data.get('info', '')
+
+        is_ok = database.post_survey_data(name, age, info)
+        
+        if is_ok:
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(b'ok')
+        else:
+            self.send_response(500)
+            self.end_headers()
+            self.wfile.write(b'internal server err')
 
     def do_PUT(self):
         self.send_response(200)

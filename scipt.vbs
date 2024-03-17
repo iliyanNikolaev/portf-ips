@@ -18,7 +18,7 @@ End If
 
 infoInp = InputBox("Info:", "Enter information")
 
-If ageInp = "" Then
+If infoInp = "" Then 
     MsgBox "Invalid Info!", vbExclamation, "Error"
     WScript.Quit
 End If
@@ -27,7 +27,7 @@ Set xmlhttp = CreateObject("MSXML2.ServerXMLHTTP")
 
 url = "http://localhost:6161"
 
-data = "{""name"":""" & nameInp & """,""age"":" & ageInp & ",""team"":""" & infoInp & """}"
+data = "{""name"": """ & nameInp & """, ""age"": """ & ageInp & """, ""info"": """ & infoInp & """}"
 
 xmlhttp.Open "POST", url, False
 xmlhttp.setRequestHeader "Content-Type", "application/json"
