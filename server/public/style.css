@@ -1,0 +1,51 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: black;
+    color: white;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    border-bottom: 1px solid white;
+    padding: 1rem;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    background-color: white;
+    color: black;
+}
+
+#start-survey {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+#all-surveys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.surv-item {
+    margin: 1rem;
+    padding: 1rem;
+    border: 1px solid white;
+    width: 10rem;
+    height: 10rem;
+    overflow: auto;
+}

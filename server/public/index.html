@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>portf-ips</title>
-    <style>
-        body{
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
-            background-color: black;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="/style.css">
 </head>
+
 <body>
-    <h1>Hello from client</h1>
+    <nav>
+        <a href="#">surveys</a>
+        <a href="#">start survey</a>
+    </nav>
+
+    <div id="root"></div>
+    <section id="all-surveys">
+
+    </section>
+    <section id="start-survey">
+        <h2>Start survey</h2>
+        <form action="#">
+            <input type="text" name="name" placeholder="name" required>
+            <input type="text" name="age" placeholder="age" required>
+            <input type="text" name="info" placeholder="info" required>
+            <button>Submit</button>
+        </form>
+    </section>
+    <script src="/app.js"></script>
 </body>
+
 </html>
