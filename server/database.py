@@ -57,3 +57,38 @@ def post_survey_data(name, age, info):
     finally:
         if cursor:
             cursor.close()
+
+
+def edit_survey_data(id, name, age, info):
+    if not conn:
+        return None
+    
+    query = f"UPDATE `survey_data` SET `name` = '{name}', `age` = '{age}', `info` = '{info}' WHERE (`id` = '{id}');"
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query)
+        conn.commit()
+        return True
+    except mysql.connector.Error as error:
+        print("error in db", error)
+        return None
+    finally:
+        if cursor:
+            cursor.close()
+            
+def delete_survey_data(id):
+    if not conn:
+        return None
+    
+    query = f"DELETE FROM `survey_data` WHERE (`id` = '{id}');"
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query)
+        conn.commit()
+        return True
+    except mysql.connector.Error as error:
+        print("error in db", error)
+        return None
+    finally:
+        if cursor:
+            cursor.close()

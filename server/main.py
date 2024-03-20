@@ -2,6 +2,7 @@ import os
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import database
+from urllib.parse import urlparse
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -72,17 +73,68 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(b'internal server err')
 
     def do_PUT(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        self.wfile.write(b'Hello, PUT request!')
+        parsed_url = urlparse(self.path)
+        path_segments = parsed_url.path.split('/')
+        if len(path_segments) >= 3 and path_segments[1] == 'data':
+            try:
+                id = int(path_segments[2])
+                content_length = int(self.headers['Content-Length'])
+                post_data = self.rfile.read(content_length)
+                try:
+                    data = json.loads(post_data.decode('utf-8'))
+                    if 'name' not in data or 'age' not in data or 'info' not in data:
+                        raise ValueError('missing data in body')
+                    if not data['name'] or not data['age'] or not data['info']:
+                        raise ValueError('all fields are required')
+        
+                except ValueError as e:
+                    self.send_response(400)
+                    self.end_headers()
+                    self.wfile.write(str(e).encode()) 
+                    return
+            
+                name = data.get('name', '')
+                age = data.get('age', '')
+                info = data.get('info', '')
+
+                is_ok = database.edit_survey_data(id, name, age, info)
+                if is_ok:
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/plain')
+                    self.end_headers()
+                    self.wfile.write(b'ok')
+                else: 
+                    self.send_response(500)
+                    self.end_headers()
+                    self.wfile.write(b'internal server err')
+            except ValueError:
+                self.send_response(400)
+                self.end_headers()
+                self.wfile.write(b'Bad request: ID must be an integer')
+        else:
+            self.send_response(400)
+            self.end_headers()
+            self.wfile.write(b'Bad request: Invalid URL format')
 
     def do_DELETE(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        self.wfile.write(b'Hello, DELETE request!')
-
+        parsed_url = urlparse(self.path)
+        path_segments = parsed_url.path.split('/')
+        if len(path_segments) >= 3 and path_segments[1] == 'data':
+            id = int(path_segments[2])
+            is_ok = database.delete_survey_data(id)
+            if is_ok:
+                self.send_response(200)
+                self.send_header('Content-type', 'text/plain')
+                self.end_headers()
+                self.wfile.write(b'ok')
+            else:
+                self.send_response(500)
+                self.end_headers()
+                self.wfile.write(b'internal server err')
+        else:
+            self.send_response(400)
+            self.end_headers()
+            self.wfile.write(b'Bad request: Invalid URL format')
 def run(server_class=HTTPServer, handler_class=RequestHandler, port=6161):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
